@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trivia Matemática 2° Medio | Estudio Interactivo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #2b1b54, #1a3b5c);
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .container {
+      width: 100%;
+      max-width: 850px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 30px;
+      padding: 30px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      /* Fallback para navegadores que no soporten backdrop-filter */
+      background: rgba(30, 20, 60, 0.5);
+    }
+    h1, h2, h3 { text-align: center; margin-bottom: 15px; }
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      background: linear-gradient(to right, #ffe259, #ffa751);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 5px;
+    }
+    .subtitle {
+      text-align: center;
+      color: #ccc;
+      margin-bottom: 25px;
+    }
+    button {
+      font-family: 'Poppins', sans-serif;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 14px 28px;
+      margin: 8px;
+      border-radius: 40px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: #fff;
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      white-space: normal;
+      word-break: break-word;
+      background: rgba(60, 50, 100, 0.4);
+    }
+    button:hover {
+      background: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.6);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+    .menu-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 20px; }
+    .quiz-layout {
+      display: flex;
+      gap: 25px;
+      align-items: flex-start;
+      margin: 20px 0;
+    }
+    .question-area { flex: 1; }
+    .progress-bar-container {
+      width: 100%;
+      height: 8px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 10px;
+      margin: 15px 0;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ffcc00, #ff9d00);
+      border-radius: 10px;
+      transition: width 0.4s ease;
+    }
+    .question-box {
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 20px;
+      padding: 25px;
+      font-size: 1.2rem;
+      font-weight: 500;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+    .option-btn {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      text-align: left;
+      padding: 16px 20px;
+      border-radius: 16px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 500;
+      white-space: normal;
+      word-break: break-word;
+      background: rgba(60, 50, 100, 0.4);
+    }
+    .option-btn:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: #ffcc00;
+      transform: scale(1.02);
+    }
+    .option-btn .option-letter {
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .option-btn.correct {
+      background: #2e7d32;
+      border-color: #4caf50;
+      color: white;
+    }
+    .option-btn.incorrect {
+      background: #b71c1c;
+      border-color: #e53935;
+      color: white;
+    }
+    .option-btn:disabled { cursor: default; opacity: 0.8; }
+    .progress {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 5px;
+      font-weight: 600;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .timer {
+      background: rgba(0,0,0,0.4);
+      padding: 8px 18px;
+      border-radius: 30px;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .explanation {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 18px;
+      border-radius: 16px;
+      margin-top: 18px;
+      line-height: 1.6;
+      font-size: 0.95rem;
+      border-left: 5px solid #ffcc00;
+      animation: fadeIn 0.4s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .score-final { font-size: 3rem; text-align: center; margin: 20px 0; font-weight: 700; }
+    .hidden { display: none; }
+    .review-list { max-height: 300px; overflow-y: auto; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; text-align: left; margin-top: 15px; }
+    .review-item { margin-bottom: 10px; font-size: 0.9rem; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .snoopy-container {
+      width: 130px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .snoopy-avatar {
+      font-size: 4.5rem;
+      line-height: 1;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,0.4));
+      animation: float 3s ease-in-out infinite;
+      transition: transform 0.3s;
+    }
+    .snoopy-avatar.happy { animation: bounce 0.5s ease; }
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0); }
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+    .speech-bubble {
+      position: relative;
+      background: white;
+      color: #1e3c72;
+      border-radius: 20px;
+      padding: 10px 14px;
+      margin-top: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      word-break: break-word;
+    }
+    .speech-bubble::after {
+      content: '';
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 12px solid transparent;
+      border-bottom-color: white;
+    }
+    #next-btn {
+      background: linear-gradient(135deg, #ffcc00, #ff9d00);
+      color: #1a1a2e;
+      border: none;
+      font-weight: 700;
+      margin-top: 18px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    #next-btn:hover { background: linear-gradient(135deg, #ffd633, #ffb347); }
+    .medal {
+      font-size: 4rem;
+      animation: float 2s ease-in-out infinite;
+    }
+
+    /* ====== ESTILOS PARA CELULARES ====== */
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+      .container {
+        padding: 20px 15px;
+        border-radius: 20px;
+      }
+      h1 {
+        font-size: 1.8rem;
+      }
+      .quiz-layout {
+        flex-direction: column;
+        gap: 15px;
+      }
+      .snoopy-container {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+      .snoopy-avatar {
+        font-size: 2.5rem;
+      }
+      .speech-bubble {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+      }
+      .options {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      .option-btn {
+        padding: 12px 15px;
+        font-size: 0.9rem;
+      }
+      .option-btn .option-letter {
+        width: 25px;
+        height: 25px;
+        font-size: 0.85rem;
+      }
+      .question-box {
+        padding: 15px;
+        font-size: 1rem;
+      }
+      .progress {
+        font-size: 0.9rem;
+      }
+      .timer {
+        padding: 5px 12px;
+        font-size: 0.9rem;
+      }
+      button {
+        padding: 12px 20px;
+        font-size: 0.9rem;
+      }
+      .menu-buttons {
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container" id="app">
+  <div id="subject-screen">
+    <h1>📐 Matemática</h1>
+    <p class="subtitle">2° Medio · Chile</p>
+    <p style="text-align:center; margin-bottom:10px;">Elige un tema para comenzar la trivia (20 preguntas aleatorias):</p>
+    <div class="menu-buttons" id="topic-buttons"></div>
+  </div>
+
+  <div id="quiz-screen" class="hidden">
+    <div class="progress">
+      <span id="question-counter">Pregunta 1 de 20</span>
+      <span class="timer">⏳ <span id="timer-display">20s</span></span>
+      <span id="score-display">⭐ 0</span>
+    </div>
+    <div class="progress-bar-container">
+      <div class="progress-bar-fill" id="progress-bar" style="width: 0%;"></div>
+    </div>
+    <div class="quiz-layout">
+      <div class="question-area">
+        <div class="question-box" id="question-text"></div>
+        <div class="options" id="options-container"></div>
+        <div id="feedback" class="hidden explanation"></div>
+        <button id="next-btn" class="hidden" onclick="nextQuestion()">Siguiente →</button>
+      </div>
+      <div class="snoopy-container">
+        <div class="snoopy-avatar" id="snoopy-emoji">🐶</div>
+        <div class="speech-bubble" id="snoopy-message">¡Tú puedes!</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="result-screen" class="hidden">
+    <div class="medal" id="medal-emoji">🏅</div>
+    <h2>¡Prueba terminada!</h2>
+    <div class="score-final" id="final-score">0/20</div>
+    <p style="text-align:center" id="result-message"></p>
+    <button onclick="showReview()">📋 Revisar respuestas</button>
+    <div id="review-container" class="review-list hidden"></div>
+    <button onclick="restartGame()">🔄 Volver al inicio</button>
+  </div>
+</div>
+
+<script>
+  const topics = [
+    {
+      name: "Álgebra y Ecuaciones",
+      questions: [
+        { question: "¿Cuál es la solución de la ecuación 2x - 6 = 10?", options: ["x = 8", "x = 2", "x = -2", "x = 5"], correct: 0, explanation: "Sumamos 6 a ambos lados: 2x = 16. Luego dividimos por 2: x = 8. Verifica: 2·8 - 6 = 10." },
+        { question: "Al resolver 3(x + 2) = 15, el valor de x es:", options: ["3", "4", "5", "7"], correct: 0, explanation: "Distribuimos: 3x + 6 = 15. Restamos 6: 3x = 9. Dividimos entre 3: x = 3." },
+        { question: "El producto (x + 5)(x - 2) equivale a:", options: ["x² + 3x - 10", "x² - 3x - 10", "x² + 7x - 10", "x² - 10"], correct: 0, explanation: "Aplicando distributiva: x·x = x², x·(-2) = -2x, 5·x = 5x, 5·(-2) = -10. Sumando términos semejantes: x² + 3x - 10." },
+        { question: "La factorización de x² - 9 es:", options: ["(x - 3)(x + 3)", "(x - 9)(x + 1)", "(x - 3)²", "x(x - 9)"], correct: 0, explanation: "Diferencia de cuadrados: a² - b² = (a - b)(a + b). Aquí a=x, b=3, entonces (x-3)(x+3)." },
+        { question: "¿Cuál es el valor de 'y' en el sistema x + y = 7, x - y = 1?", options: ["y = 3", "y = 4", "y = 6", "y = 2"], correct: 0, explanation: "Sumamos ambas ecuaciones: (x+y)+(x-y)=7+1 → 2x=8 → x=4. Sustituyendo en primera: 4+y=7 → y=3." },
+        { question: "La expresión 4x - (2x + 3) se simplifica a:", options: ["2x - 3", "2x + 3", "6x + 3", "-2x - 3"], correct: 0, explanation: "El signo menos cambia los signos dentro del paréntesis: 4x - 2x - 3 = 2x - 3." },
+        { question: "El conjunto solución de la inecuación 2x + 1 > 7 es:", options: ["x > 3", "x < 3", "x > 4", "x < 4"], correct: 0, explanation: "Restamos 1: 2x > 6. Dividimos por 2: x > 3. Todos los números mayores que 3 satisfacen la desigualdad." },
+        { question: "¿Qué número verifica que 5(x - 1) = 20?", options: ["5", "4", "3", "6"], correct: 0, explanation: "Distribuimos: 5x - 5 = 20. Sumamos 5: 5x = 25. Dividimos: x = 5." },
+        { question: "La raíz de la ecuación x/2 + 4 = 7 es:", options: ["x = 6", "x = 3", "x = 8", "x = 2"], correct: 0, explanation: "Restamos 4: x/2 = 3. Multiplicamos por 2: x = 6." },
+        { question: "Factor común de 6x² + 9x es:", options: ["3x(2x + 3)", "3(2x² + 3x)", "x(6x + 9)", "3x(2x + 1)"], correct: 0, explanation: "El máximo factor común de 6 y 9 es 3, y ambos términos tienen al menos x. Extraemos 3x: 3x·2x = 6x², 3x·3 = 9x." },
+        { question: "Al desarrollar (x - 4)² se obtiene:", options: ["x² - 8x + 16", "x² + 8x + 16", "x² - 16", "x² - 4x + 16"], correct: 0, explanation: "Fórmula del cuadrado de un binomio: (a - b)² = a² - 2ab + b². Con a=x, b=4: x² - 2·x·4 + 4² = x² - 8x + 16." },
+        { question: "La solución de 3x - 7 = 2x + 5 es:", options: ["x = 12", "x = -2", "x = 2", "x = 5"], correct: 0, explanation: "Pasamos las x a un lado: 3x - 2x = 5 + 7 → x = 12." },
+        { question: "¿Cuál es el producto (x - 3)(x + 3)?", options: ["x² - 9", "x² + 9", "x² - 6", "x² + 6x - 9"], correct: 0, explanation: "Suma por diferencia: (a-b)(a+b) = a² - b². Aquí a=x, b=3, entonces x² - 3² = x² - 9." },
+        { question: "Para que (x + 2)(x + k) = x² + 5x + 6, k vale:", options: ["3", "2", "1", "4"], correct: 0, explanation: "Desarrollamos: x² + (2+k)x + 2k. Igualamos coeficientes: 2+k=5 ⇒ k=3, y 2k=6 ⇒ k=3. Coincide." },
+        { question: "El valor de x que satisface 4 - 2x = x + 1 es:", options: ["x = 1", "x = -1", "x = 3", "x = 5/3"], correct: 0, explanation: "Llevamos las x a un lado: -2x - x = 1 - 4 → -3x = -3 → x = 1." },
+        { question: "La factorización de x² + 5x + 6 es:", options: ["(x + 2)(x + 3)", "(x + 1)(x + 6)", "(x - 2)(x - 3)", "(x + 3)(x - 2)"], correct: 0, explanation: "Buscamos dos números que sumen 5 y multipliquen 6: 2 y 3. Por lo tanto, (x+2)(x+3)." },
+        { question: "El doble de un número más su triple es 55. ¿Cuál es el número?", options: ["11", "5", "10", "15"], correct: 0, explanation: "Sea x el número. Planteamos: 2x + 3x = 55 → 5x = 55 → x = 11." },
+        { question: "La inecuación -3x ≥ 9 tiene como solución:", options: ["x ≤ -3", "x ≥ -3", "x > 3", "x < -3"], correct: 0, explanation: "Dividimos ambos lados por -3 (recuerda invertir la desigualdad): x ≤ -3." },
+        { question: "El valor numérico de 2a² - a para a = -1 es:", options: ["3", "1", "-3", "-1"], correct: 0, explanation: "Sustituimos: 2·(-1)² - (-1) = 2·1 + 1 = 3." },
+        { question: "¿Cuál es la ecuación equivalente a x(x-1) = 0?", options: ["x² - x = 0", "x² + x = 0", "x² - 1 = 0", "x = 0"], correct: 0, explanation: "Multiplicando: x·x - x·1 = x² - x = 0." },
+        { question: "La suma de dos números es 15 y su diferencia es 3. ¿Cuáles son?", options: ["9 y 6", "10 y 5", "8 y 7", "12 y 3"], correct: 0, explanation: "Planteamos sistema: x+y=15, x-y=3. Sumando: 2x=18 → x=9, luego y=6." },
+        { question: "Factoriza completamente: 4x² - 25", options: ["(2x - 5)(2x + 5)", "(4x - 5)(x + 5)", "(2x - 5)²", "2(2x² - 12.5)"], correct: 0, explanation: "Reconocemos diferencia de cuadrados: (2x)² - 5². Luego (2x-5)(2x+5)." },
+        { question: "En la ecuación 5x + 2 = 3x + 10, el valor de x es:", options: ["4", "3", "5", "6"], correct: 0, explanation: "Restamos 3x: 2x+2=10. Restamos 2: 2x=8 → x=4." },
+        { question: "El producto de un número por su consecutivo es 72. El número es:", options: ["8", "9", "7", "6"], correct: 0, explanation: "Sea x el número: x(x+1)=72 → x²+x-72=0. Factorizando: (x+9)(x-8)=0. La solución positiva es x=8." },
+        { question: "La expresión (a+b)² - (a-b)² se reduce a:", options: ["4ab", "2ab", "2(a²+b²)", "0"], correct: 0, explanation: "Desarrollamos: (a²+2ab+b²) - (a²-2ab+b²) = a²+2ab+b² -a²+2ab -b² = 4ab." },
+        { question: "Si 2(x - 3) = x + 4, entonces x vale:", options: ["10", "2", "5", "-10"], correct: 0, explanation: "Distribuimos: 2x - 6 = x + 4. Restamos x: x - 6 = 4 → x = 10." },
+        { question: "La solución de la desigualdad 4 - 3x ≤ 1 es:", options: ["x ≥ 1", "x ≤ 1", "x ≥ -1", "x ≤ -1"], correct: 0, explanation: "Restamos 4: -3x ≤ -3. Dividimos entre -3 (invertimos): x ≥ 1." },
+        { question: "Un rectángulo tiene largo 2x+3 y ancho x-1. Su perímetro es 28. ¿Cuánto vale x?", options: ["4", "5", "3", "6"], correct: 0, explanation: "Perímetro: 2[(2x+3)+(x-1)] = 28 → 2(3x+2)=28 → 3x+2=14 → 3x=12 → x=4." },
+        { question: "Ana tiene el doble de edad que su hermano y sus edades suman 30. ¿Cuántos años tiene Ana?", options: ["20", "15", "25", "10"], correct: 0, explanation: "Edad hermano: x, Ana: 2x. Suma: 3x = 30 → x=10. Entonces Ana tiene 20 años." },
+        { question: "El valor de k para que la ecuación 2x² + kx + 3 = 0 tenga una raíz igual a 1 es:", options: ["-5", "5", "1", "-1"], correct: 0, explanation: "Sustituimos x=1: 2·1² + k·1 + 3 = 0 → 2 + k + 3 = 0 → k = -5." }
+      ]
+    },
+    {
+      name: "Funciones",
+      questions: [
+        { question: "La función f(x) = 2x + 1 es:", options: ["Lineal afín", "Cuadrática", "Constante", "Valor absoluto"], correct: 0, explanation: "Es de la forma f(x)=mx + n, con m≠0. Representa una línea recta que no pasa por el origen." },
+        { question: "El valor de f(3) en f(x) = -x + 4 es:", options: ["1", "7", "-1", "-7"], correct: 0, explanation: "Sustituimos x=3: f(3) = -3 + 4 = 1." },
+        { question: "La gráfica de y = x² - 4 corta al eje X en:", options: ["x = 2 y x = -2", "x = 4 y x = -4", "x = 0 y x = 4", "solo x = 2"], correct: 0, explanation: "Igualamos a cero: x²-4=0 → (x-2)(x+2)=0. Las raíces son x=2 y x=-2." },
+        { question: "¿Cuál es la pendiente de la recta que pasa por (1,2) y (3,8)?", options: ["3", "2", "4", "1"], correct: 0, explanation: "Pendiente m = (y₂-y₁)/(x₂-x₁) = (8-2)/(3-1) = 6/2 = 3." },
+        { question: "Una función cuadrática con vértice en (0,-1) y que abre hacia arriba podría ser:", options: ["f(x) = x² - 1", "f(x) = -x² - 1", "f(x) = x² + 1", "f(x) = 2x² + 1"], correct: 0, explanation: "La forma canónica es f(x)=a(x-h)²+k. Vértice (0,-1) ⇒ f(x)=ax²-1. Como abre hacia arriba, a>0, la opción más simple es f(x)=x²-1." },
+        { question: "El dominio de f(x) = √(x-2) es:", options: ["x ≥ 2", "Todos los reales", "x > 0", "x ≤ 2"], correct: 0, explanation: "El radicando debe ser mayor o igual a cero: x-2 ≥ 0 → x ≥ 2." },
+        { question: "La imagen o recorrido de f(x) = x² es:", options: ["y ≥ 0", "Todos los reales", "y > 0", "y ≤ 0"], correct: 0, explanation: "El cuadrado de cualquier número real es no negativo. Incluye el 0 cuando x=0. Por tanto, [0,∞)." },
+        { question: "¿Qué función representa una proporcionalidad directa?", options: ["f(x) = 5x", "f(x) = x + 3", "f(x) = x²", "f(x) = 2/x"], correct: 0, explanation: "Una proporcionalidad directa es de la forma f(x)=kx, pasa por el origen (0,0)." },
+        { question: "La intersección con el eje Y de y = -2x + 6 es:", options: ["(0,6)", "(6,0)", "(0,-2)", "(-2,0)"], correct: 0, explanation: "Evaluamos en x=0: y = -2·0 + 6 = 6. El punto es (0,6)." },
+        { question: "La función f(x) = 3 es:", options: ["Constante", "Lineal", "Identidad", "Cuadrática"], correct: 0, explanation: "Siempre toma el valor 3, independientemente de x. Su gráfica es una línea horizontal." },
+        { question: "El eje de simetría de la parábola y = x² - 4x + 3 es:", options: ["x = 2", "x = -2", "x = 4", "x = 1"], correct: 0, explanation: "Fórmula: x = -b/(2a) = -(-4)/(2·1) = 4/2 = 2." },
+        { question: "Si f(x)=3x-2 y g(x)=x+1, entonces (f+g)(x) es:", options: ["4x -1", "2x -3", "3x² +1", "4x -3"], correct: 0, explanation: "Suma de funciones: (f+g)(x) = f(x)+g(x) = (3x-2)+(x+1) = 4x -1." },
+        { question: "Una recta paralela a y = 2x + 5 tiene pendiente:", options: ["2", "5", "-1/2", "-2"], correct: 0, explanation: "Rectas paralelas tienen igual pendiente. La pendiente de la recta dada es 2." },
+        { question: "La función valor absoluto f(x)=|x| tiene su mínimo en:", options: ["(0,0)", "(1,1)", "(-1,1)", "No tiene"], correct: 0, explanation: "El valor absoluto nunca es negativo, y es cero cuando x=0. El punto mínimo es (0,0)." },
+        { question: "f(x)= -x² + 4 es una parábola que abre hacia:", options: ["Abajo", "Arriba", "Derecha", "Izquierda"], correct: 0, explanation: "El coeficiente del término cuadrático es -1 (negativo), por lo tanto la parábola es cóncava hacia abajo." },
+        { question: "La recta que pasa por el origen y tiene pendiente -1 es:", options: ["y = -x", "y = x -1", "y = -x +1", "y = x"], correct: 0, explanation: "Pasa por (0,0) y su ecuación es y = mx + n, con n=0 (pasa por origen) y m=-1. Entonces y = -x." },
+        { question: "El vértice de y = (x-3)² + 2 es:", options: ["(3,2)", "(-3,2)", "(3,-2)", "(0,2)"], correct: 0, explanation: "Forma canónica: y = a(x-h)² + k, vértice (h,k). Aquí h=3, k=2." },
+        { question: "¿Para qué valor de x se anula la función f(x) = 2x - 8?", options: ["x = 4", "x = -4", "x = 0", "x = 8"], correct: 0, explanation: "Igualamos a cero: 2x - 8 = 0 → 2x = 8 → x = 4." },
+        { question: "La pendiente de una recta horizontal es:", options: ["0", "1", "Indefinida", "-1"], correct: 0, explanation: "Una recta horizontal no tiene inclinación, su pendiente es 0. Ejemplo: y = 5." },
+        { question: "f(x) = x² + 2x + 1 se factoriza como:", options: ["(x+1)²", "(x-1)²", "x(x+2)", "(x+1)(x-1)"], correct: 0, explanation: "Es un trinomio cuadrado perfecto: (x+1)² = x² + 2x +1." },
+        { question: "¿Cuál es la función inversa de f(x)=3x-6?", options: ["f⁻¹(x)=(x+6)/3", "f⁻¹(x)=3x+6", "f⁻¹(x)=x/3+6", "f⁻¹(x)=x-6/3"], correct: 0, explanation: "Despejamos x en y=3x-6: y+6=3x → x=(y+6)/3. Intercambiamos variables: f⁻¹(x)=(x+6)/3." },
+        { question: "Si f(x)=x²+1 y g(x)=2x, entonces (f∘g)(x) es:", options: ["4x²+1", "2x²+1", "2(x²+1)", "x²+2x+1"], correct: 0, explanation: "Composición: f(g(x)) = f(2x) = (2x)² + 1 = 4x² + 1." },
+        { question: "El punto de intersección de y=2x+3 e y=-x+6 es:", options: ["(1,5)", "(2,7)", "(3,9)", "(0,3)"], correct: 0, explanation: "Igualamos: 2x+3 = -x+6 → 3x=3 → x=1. Sustituyendo en y=2·1+3=5. Punto (1,5)." },
+        { question: "La función exponencial f(x)=2ˣ evaluada en x=3 da:", options: ["8", "6", "9", "5"], correct: 0, explanation: "2³ = 2·2·2 = 8." },
+        { question: "La parábola y = x² - 6x + 5 tiene su vértice en:", options: ["(3,-4)", "(-3,4)", "(3,4)", "(6,5)"], correct: 0, explanation: "x = -b/(2a) = -(-6)/(2·1)=3. y = 3² -6·3 +5 = 9-18+5 = -4. Vértice (3,-4)." },
+        { question: "La función logaritmo base 10 de 1000 es:", options: ["3", "100", "10", "1"], correct: 0, explanation: "log₁₀(1000) = 3 porque 10³ = 1000." },
+        { question: "Una función es par si cumple:", options: ["f(-x) = f(x)", "f(-x) = -f(x)", "f(x+1)=f(x)", "Es simétrica respecto al origen"], correct: 0, explanation: "La propiedad f(-x)=f(x) define una función par, simétrica respecto al eje Y. Ejemplo: f(x)=x²." },
+        { question: "La recta y = 5 es:", options: ["Horizontal", "Vertical", "Diagonal", "Parabólica"], correct: 0, explanation: "Su pendiente es 0, no depende de x. Es una recta horizontal." },
+        { question: "El dominio de f(x)=1/(x-1) es:", options: ["Todos los reales excepto x=1", "Todos los reales", "x>1", "x<1"], correct: 0, explanation: "El denominador no puede ser cero: x-1≠0 → x≠1. Dominio: R \\ {1}." },
+        { question: "El recorrido de f(x) = 3ˣ es:", options: ["(0,∞)", "[0,∞)", "Todos los reales", "(-∞,0)"], correct: 0, explanation: "La función exponencial con base >0 nunca toma valores negativos ni cero. Su imagen es (0,∞)." }
+      ]
+    },
+    {
+      name: "Geometría",
+      questions: [
+        { question: "El teorema de Pitágoras se aplica en triángulos:", options: ["Rectángulos", "Equiláteros", "Isósceles", "Cualquier triángulo"], correct: 0, explanation: "Solo en triángulos rectángulos se cumple que el cuadrado de la hipotenusa es igual a la suma de los cuadrados de los catetos." },
+        { question: "En un triángulo rectángulo de catetos 6 y 8, la hipotenusa mide:", options: ["10", "14", "9", "12"], correct: 0, explanation: "Por Pitágoras: c² = 6² + 8² = 36 + 64 = 100 → c = √100 = 10." },
+        { question: "Dos triángulos son semejantes si:", options: ["Tienen ángulos iguales", "Tienen lados iguales", "Tienen igual área", "Tienen igual perímetro"], correct: 0, explanation: "El criterio AA (ángulo-ángulo) establece que si dos ángulos son iguales, los triángulos son semejantes (los lados son proporcionales)." },
+        { question: "El área de un círculo de radio r es:", options: ["πr²", "2πr", "πr", "r²/π"], correct: 0, explanation: "Fórmula clásica: A = π·r². No confundir con el perímetro de la circunferencia (2πr)." },
+        { question: "Un ángulo recto mide:", options: ["90°", "180°", "45°", "60°"], correct: 0, explanation: "Por definición, un ángulo recto mide 90 grados." },
+        { question: "En un triángulo, la suma de los ángulos interiores es:", options: ["180°", "360°", "90°", "270°"], correct: 0, explanation: "Propiedad fundamental de todo triángulo en geometría euclidiana." },
+        { question: "El volumen de un cubo de arista a es:", options: ["a³", "3a", "a²", "6a²"], correct: 0, explanation: "Volumen = largo × ancho × alto = a·a·a = a³." },
+        { question: "Dos rectas perpendiculares tienen pendientes que:", options: ["Multiplicadas dan -1", "Son iguales", "Suman 0", "Son inversas"], correct: 0, explanation: "Si m₁ y m₂ son las pendientes, m₁·m₂ = -1 (excepto cuando una es vertical y otra horizontal)." },
+        { question: "Un triángulo con lados 5, 5 y 8 es:", options: ["Isósceles", "Equilátero", "Escaleno", "Rectángulo"], correct: 0, explanation: "Tiene dos lados iguales (5 y 5), por lo tanto es isósceles." },
+        { question: "La longitud de una circunferencia de radio 7 cm es aproximadamente:", options: ["44 cm", "22 cm", "14 cm", "154 cm"], correct: 0, explanation: "L = 2πr ≈ 2 · 3.14 · 7 = 43.96 ≈ 44 cm." },
+        { question: "El área de un triángulo de base 10 y altura 5 es:", options: ["25", "50", "15", "30"], correct: 0, explanation: "A = (base · altura) / 2 = (10 · 5) / 2 = 25 unidades cuadradas." },
+        { question: "Un polígono de 6 lados se llama:", options: ["Hexágono", "Pentágono", "Octágono", "Heptágono"], correct: 0, explanation: "Hexa = 6, gono = lados." },
+        { question: "La razón de semejanza entre dos triángulos es 2. Si el lado menor del primero mide 3, ¿cuánto mide el correspondiente en el segundo?", options: ["6", "1.5", "3", "9"], correct: 0, explanation: "Multiplicamos por la razón de semejanza: 3 · 2 = 6." },
+        { question: "El teorema de Tales relaciona:", options: ["Segmentos proporcionales en rectas cortadas por paralelas", "Áreas de triángulos", "Volúmenes", "Ángulos opuestos"], correct: 0, explanation: "Si varias paralelas cortan a dos transversales, los segmentos determinados en ellas son proporcionales." },
+        { question: "Un ángulo llano mide:", options: ["180°", "90°", "360°", "0°"], correct: 0, explanation: "Es un ángulo extendido, formando una línea recta. Mide 180°." },
+        { question: "El perímetro de un cuadrado de lado L es:", options: ["4L", "2L", "L²", "L³"], correct: 0, explanation: "Suma de sus cuatro lados iguales: L+L+L+L = 4L." },
+        { question: "La diagonal de un rectángulo de lados 3 y 4 mide:", options: ["5", "7", "1", "12"], correct: 0, explanation: "Por Pitágoras: d² = 3² + 4² = 9+16=25 → d=5." },
+        { question: "Si dos triángulos son congruentes, entonces:", options: ["Tienen igual forma y tamaño", "Solo igual forma", "Solo igual área", "Sus ángulos suman 180°"], correct: 0, explanation: "La congruencia implica que todos los lados y ángulos correspondientes son iguales." },
+        { question: "El volumen de un cilindro de radio r y altura h es:", options: ["πr²h", "2πrh", "πr² + h", "1/3 πr²h"], correct: 0, explanation: "Volumen = área de la base (πr²) multiplicada por la altura h." },
+        { question: "Un rombo tiene diagonales 6 y 8. Su área es:", options: ["24", "48", "14", "12"], correct: 0, explanation: "Área del rombo = (diagonal mayor × diagonal menor) / 2 = (8·6)/2 = 24." },
+        { question: "El área de un trapecio de bases 8 y 12 y altura 5 es:", options: ["50", "40", "60", "100"], correct: 0, explanation: "A = ((base mayor + base menor)/2) · altura = ((12+8)/2)·5 = 10·5 = 50." },
+        { question: "En un triángulo equilátero, cada ángulo interior mide:", options: ["60°", "90°", "45°", "120°"], correct: 0, explanation: "Los tres ángulos interiores suman 180°. Al ser iguales, cada uno mide 180°/3 = 60°." },
+        { question: "La apotema de un hexágono regular de lado 6 cm es aproximadamente:", options: ["5.2 cm", "3 cm", "6 cm", "10.4 cm"], correct: 0, explanation: "En un hexágono regular, la apotema a = (lado · √3) / 2 = (6 · 1.732) / 2 ≈ 5.2 cm." },
+        { question: "La suma de los ángulos exteriores de cualquier polígono convexo es:", options: ["360°", "180°", "540°", "Depende del número de lados"], correct: 0, explanation: "Siempre suman 360°, independientemente del número de lados." },
+        { question: "Un triángulo con lados 7, 24, 25 es:", options: ["Rectángulo", "Obtusángulo", "Acutángulo", "Equilátero"], correct: 0, explanation: "Verificamos: 7²+24² = 49+576 = 625 = 25². Cumple Pitágoras, por lo tanto es rectángulo." },
+        { question: "En una circunferencia, el ángulo inscrito mide:", options: ["La mitad del ángulo del centro que subtiende el mismo arco", "Igual al del centro", "El doble", "90° siempre"], correct: 0, explanation: "Propiedad fundamental: ángulo inscrito = 1/2 · ángulo del centro para el mismo arco." },
+        { question: "El área de un sector circular de 90° y radio 4 cm es:", options: ["4π cm²", "2π cm²", "8π cm²", "π cm²"], correct: 0, explanation: "A = (ángulo/360°) · πr² = (90/360)·π·16 = (1/4)·16π = 4π cm²." },
+        { question: "La altura de un triángulo equilátero de lado 10 cm mide:", options: ["5√3 cm", "10 cm", "5 cm", "10√3 cm"], correct: 0, explanation: "h = (lado · √3) / 2 = 10√3/2 = 5√3 cm." },
+        { question: "El volumen de una esfera de radio 3 cm es:", options: ["36π cm³", "27π cm³", "12π cm³", "9π cm³"], correct: 0, explanation: "V = (4/3)πr³ = (4/3)π·27 = 36π cm³." },
+        { question: "La distancia entre los puntos (1,2) y (4,6) es:", options: ["5", "3", "7", "√20"], correct: 0, explanation: "d = √[(4-1)² + (6-2)²] = √[3²+4²] = √(9+16) = √25 = 5." }
+      ]
+    },
+    {
+      name: "Probabilidad y Estadística",
+      questions: [
+        { question: "La probabilidad de obtener cara al lanzar una moneda es:", options: ["1/2", "1/3", "1/4", "2/3"], correct: 0, explanation: "Hay 2 resultados posibles (cara o cruz) y 1 favorable. Probabilidad = 1/2." },
+        { question: "La media de los datos 4, 6, 8 es:", options: ["6", "18", "4", "8"], correct: 0, explanation: "Media = (4+6+8)/3 = 18/3 = 6." },
+        { question: "En un dado, la probabilidad de obtener un número par es:", options: ["1/2", "1/3", "1/6", "2/3"], correct: 0, explanation: "Hay 3 números pares (2,4,6) de 6 resultados posibles. P = 3/6 = 1/2." },
+        { question: "La mediana de 3, 5, 7, 9, 11 es:", options: ["7", "5", "9", "11"], correct: 0, explanation: "Datos ordenados (n impar). La mediana es el valor central: 7." },
+        { question: "Un suceso seguro tiene probabilidad:", options: ["1", "0", "0.5", "Depende"], correct: 0, explanation: "Un suceso seguro siempre ocurre, su probabilidad es 1." },
+        { question: "La moda en 2, 3, 3, 5, 5, 5, 7 es:", options: ["5", "3", "2", "7"], correct: 0, explanation: "La moda es el valor que más se repite: el 5 aparece tres veces." },
+        { question: "Al lanzar dos monedas, la probabilidad de obtener dos caras es:", options: ["1/4", "1/2", "1/3", "3/4"], correct: 0, explanation: "Espacio muestral: CC, CX, XC, XX. Solo 1 de 4 casos favorables." },
+        { question: "El rango de los datos 10, 15, 20, 25 es:", options: ["15", "10", "20", "25"], correct: 0, explanation: "Rango = valor máximo - valor mínimo = 25 - 10 = 15." },
+        { question: "La probabilidad de un suceso imposible es:", options: ["0", "1", "0.5", "Negativa"], correct: 0, explanation: "Un suceso imposible nunca ocurre, su probabilidad es 0." },
+        { question: "La frecuencia relativa de un dato se calcula como:", options: ["Frecuencia absoluta / total de datos", "Frecuencia absoluta × total", "Total / frecuencia", "Frecuencia - media"], correct: 0, explanation: "Es la proporción que representa un dato respecto al total." },
+        { question: "En una bolsa con 3 bolitas rojas y 2 azules, la probabilidad de sacar una roja es:", options: ["3/5", "2/5", "1/2", "3/2"], correct: 0, explanation: "Casos favorables (rojas) = 3, total = 5. P = 3/5." },
+        { question: "El percentil 50 coincide con:", options: ["La mediana", "La media", "La moda", "El mínimo"], correct: 0, explanation: "El percentil 50 deja el 50% de los datos por debajo, igual que la mediana." },
+        { question: "Lanzar un dado y que salga 7 es un evento:", options: ["Imposible", "Seguro", "Probable", "Equiprobable"], correct: 0, explanation: "Un dado estándar solo tiene números del 1 al 6. El 7 es imposible." },
+        { question: "La varianza mide:", options: ["Dispersión respecto a la media", "El valor central", "La frecuencia", "La moda"], correct: 0, explanation: "Indica qué tan esparcidos están los datos alrededor de la media." },
+        { question: "En una urna con igual número de fichas verdes y amarillas, la probabilidad de extraer verde es:", options: ["1/2", "1/3", "2/3", "1"], correct: 0, explanation: "Si hay igual cantidad, los casos favorables son la mitad del total. P = 1/2." },
+        { question: "El diagrama de cajón (boxplot) muestra:", options: ["Cuartiles y valores atípicos", "Solo la media", "Frecuencias absolutas", "Solo el máximo"], correct: 0, explanation: "Representa los cinco números: mínimo, Q1, mediana, Q3, máximo, e identifica valores atípicos." },
+        { question: "La probabilidad de que ocurra A o B, si son mutuamente excluyentes, es:", options: ["P(A) + P(B)", "P(A) × P(B)", "P(A) - P(B)", "1 - P(A)"], correct: 0, explanation: "Como no pueden ocurrir simultáneamente, se suman sus probabilidades." },
+        { question: "El promedio de 0, 10, 20 es:", options: ["10", "15", "30", "5"], correct: 0, explanation: "(0+10+20)/3 = 30/3 = 10." },
+        { question: "La probabilidad de no sacar un as de un mazo de 52 cartas es:", options: ["48/52", "4/52", "1/13", "1/4"], correct: 0, explanation: "Hay 4 ases, por lo tanto 48 cartas no son ases. P(no as) = 48/52 = 12/13." },
+        { question: "Un gráfico circular representa:", options: ["Proporciones de un total", "Evolución temporal", "Frecuencias acumuladas", "Diagrama de dispersión"], correct: 0, explanation: "Cada sector muestra la fracción que representa una categoría respecto al total." },
+        { question: "Se lanzan dos dados. La probabilidad de que la suma sea 7 es:", options: ["1/6", "1/12", "1/8", "1/4"], correct: 0, explanation: "Hay 6 combinaciones que suman 7: (1,6),(2,5),(3,4),(4,3),(5,2),(6,1) de un total de 36. 6/36=1/6." },
+        { question: "Si la media de 5 números es 10 y cuatro de ellos son 8, 9, 11, 12, el quinto número es:", options: ["10", "5", "15", "20"], correct: 0, explanation: "Suma total = media × n = 10×5 = 50. Suma de los cuatro = 8+9+11+12 = 40. El quinto es 50-40=10." },
+        { question: "En una muestra, el primer cuartil (Q1) es 30 y el tercer cuartil (Q3) es 70. El rango intercuartílico es:", options: ["40", "30", "70", "100"], correct: 0, explanation: "IQR = Q3 - Q1 = 70 - 30 = 40." },
+        { question: "Una moneda sesgada tiene probabilidad 0.3 de cara. La probabilidad de cruz es:", options: ["0.7", "0.3", "0.5", "1"], correct: 0, explanation: "La suma de probabilidades de todos los resultados posibles es 1. P(cruz)=1-0.3=0.7." },
+        { question: "La mediana de un conjunto de datos par se calcula como:", options: ["Promedio de los dos valores centrales", "El valor que más se repite", "La suma de todos", "El valor central sin promediar"], correct: 0, explanation: "Con un número par de datos, no hay un único valor central. Se promedian los dos del medio." },
+        { question: "En una distribución simétrica, la media y la mediana:", options: ["Coinciden aproximadamente", "Son siempre distintas", "La media es mayor", "La mediana es mayor"], correct: 0, explanation: "En una distribución perfectamente simétrica, media = mediana." },
+        { question: "La probabilidad de que al sacar una carta de un mazo español (40 cartas) sea un rey es:", options: ["1/10", "1/4", "1/13", "1/40"], correct: 0, explanation: "Hay 4 reyes en 40 cartas: 4/40 = 1/10." },
+        { question: "Al lanzar tres monedas, el número de resultados posibles es:", options: ["8", "6", "9", "4"], correct: 0, explanation: "Cada moneda tiene 2 resultados. Total: 2³ = 8." },
+        { question: "Una encuesta muestra que el 60% prefiere chocolate. Si se eligen 2 personas al azar, la probabilidad de que ambas prefieran chocolate es:", options: ["0.36", "0.6", "1.2", "0.3"], correct: 0, explanation: "P(ambas) = 0.6 × 0.6 = 0.36 (suponiendo independencia)." },
+        { question: "El espacio muestral de lanzar un dado es:", options: ["{1,2,3,4,5,6}", "{cara, cruz}", "{0,1}", "{par, impar}"], correct: 0, explanation: "Seis resultados posibles." }
+      ]
+    }
+  ];
+
+  let currentTopic = null;
+  let selectedQuestions = [];
+  let currentQuestionIndex = 0;
+  let score = 0;
+  let timerInterval;
+  let timeLeft = 20;
+  let userAnswers = [];
+
+  const topicButtons = document.getElementById("topic-buttons");
+  const quizScreen = document.getElementById("quiz-screen");
+  const resultScreen = document.getElementById("result-screen");
+  const subjectScreen = document.getElementById("subject-screen");
+  const snoopyEmoji = document.getElementById("snoopy-emoji");
+  const snoopyMessage = document.getElementById("snoopy-message");
+
+  // Algoritmo Fisher-Yates para barajar (compatible con todos los navegadores, incluido Safari)
+  function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+  }
+
+  function renderTopicButtons() {
+    topicButtons.innerHTML = "";
+    topics.forEach((topic, idx) => {
+      const btn = document.createElement("button");
+      btn.textContent = topic.name;
+      btn.onclick = () => startQuiz(idx);
+      topicButtons.appendChild(btn);
+    });
+  }
+
+  function startQuiz(topicIdx) {
+    currentTopic = topics[topicIdx];
+    const allQuestions = [...currentTopic.questions];
+    shuffleArray(allQuestions);
+    selectedQuestions = allQuestions.slice(0, 20);
+    currentQuestionIndex = 0;
+    score = 0;
+    userAnswers = [];
+    subjectScreen.classList.add("hidden");
+    quizScreen.classList.remove("hidden");
+    resultScreen.classList.add("hidden");
+    showQuestion();
+    snoopyMessage.textContent = "¡Tú puedes!";
+    snoopyEmoji.textContent = "🐶";
+  }
+
+  function showQuestion() {
+    if (currentQuestionIndex >= selectedQuestions.length) {
+      endQuiz();
+      return;
+    }
+    const q = selectedQuestions[currentQuestionIndex];
+    document.getElementById("question-text").textContent = q.question;
+    const optionsContainer = document.getElementById("options-container");
+    optionsContainer.innerHTML = "";
+    document.getElementById("feedback").classList.add("hidden");
+    document.getElementById("next-btn").classList.add("hidden");
+    const letters = ["A", "B", "C", "D"];
+    let optionsData = q.options.map((text, idx) => ({ text, originalIndex: idx }));
+    shuffleArray(optionsData);
+    optionsData.forEach((optObj, position) => {
+      const btn = document.createElement("button");
+      btn.className = "option-btn";
+      const letter = letters[position];
+      btn.innerHTML = `<span class="option-letter">${letter}</span> ${optObj.text}`;
+      btn.dataset.originalIndex = optObj.originalIndex;
+      btn.onclick = () => handleAnswer(parseInt(optObj.originalIndex));
+      optionsContainer.appendChild(btn);
+    });
+    document.getElementById("question-counter").textContent = `Pregunta ${currentQuestionIndex + 1} de ${selectedQuestions.length}`;
+    document.getElementById("score-display").textContent = `⭐ ${score}`;
+    document.getElementById("progress-bar").style.width = `${((currentQuestionIndex) / selectedQuestions.length) * 100}%`;
+    resetTimer();
+    snoopyEmoji.classList.remove("happy");
+  }
+
+  function resetTimer() {
+    clearInterval(timerInterval);
+    timeLeft = 20;
+    document.getElementById("timer-display").textContent = `${timeLeft}s`;
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      document.getElementById("timer-display").textContent = `${timeLeft}s`;
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        timeUp();
+      }
+    }, 1000);
+  }
+
+  function timeUp() {
+    const q = selectedQuestions[currentQuestionIndex];
+    disableOptions();
+    const correctBtn = document.querySelector(`.option-btn[data-original-index='${q.correct}']`);
+    if (correctBtn) correctBtn.classList.add("correct");
+    document.getElementById("feedback").classList.remove("hidden");
+    document.getElementById("feedback").innerHTML = `⏰ ¡Se acabó el tiempo!<br><strong>Respuesta correcta:</strong> ${q.options[q.correct]}<br><em>${q.explanation}</em>`;
+    userAnswers.push({ question: q.question, correct: false });
+    snoopyMessage.textContent = "¡No te rindas!";
+    snoopyEmoji.textContent = "😔";
+    document.getElementById("next-btn").classList.remove("hidden");
+  }
+
+  function handleAnswer(selectedIdx) {
+    clearInterval(timerInterval);
+    const q = selectedQuestions[currentQuestionIndex];
+    const isCorrect = (selectedIdx === q.correct);
+    if (isCorrect) score++;
+    document.getElementById("score-display").textContent = `⭐ ${score}`;
+    disableOptions();
+    const buttons = document.querySelectorAll(".option-btn");
+    buttons.forEach(btn => {
+      const idx = parseInt(btn.dataset.originalIndex);
+      if (idx === q.correct) btn.classList.add("correct");
+      if (idx === selectedIdx && !isCorrect) btn.classList.add("incorrect");
+      btn.disabled = true;
+    });
+    document.getElementById("feedback").classList.remove("hidden");
+    document.getElementById("feedback").innerHTML = isCorrect
+      ? `✅ ¡Correcto!<br><em>${q.explanation}</em>`
+      : `❌ Incorrecto. La respuesta correcta es: <strong>${q.options[q.correct]}</strong><br><em>${q.explanation}</em>`;
+    userAnswers.push({ question: q.question, correct: isCorrect });
+    snoopyMessage.textContent = isCorrect ? "¡Bien hecho!" : "¡Sigue intentando!";
+    snoopyEmoji.textContent = isCorrect ? "🐶❤️" : "🐶💬";
+    if (isCorrect) snoopyEmoji.classList.add("happy");
+    setTimeout(() => {
+      document.getElementById("next-btn").classList.remove("hidden");
+    }, 300);
+  }
+
+  function disableOptions() {
+    document.querySelectorAll(".option-btn").forEach(btn => btn.disabled = true);
+  }
+
+  function nextQuestion() {
+    currentQuestionIndex++;
+    showQuestion();
+  }
+
+  function endQuiz() {
+    clearInterval(timerInterval);
+    quizScreen.classList.add("hidden");
+    resultScreen.classList.remove("hidden");
+    document.getElementById("final-score").textContent = `${score} de ${selectedQuestions.length}`;
+    const percentage = score / selectedQuestions.length;
+    let medal, message;
+    if (percentage >= 0.9) { medal = "🏆"; message = "¡Excelente trabajo! Eres un genio de las matemáticas."; }
+    else if (percentage >= 0.7) { medal = "🥇"; message = "¡Muy bien! Sigue así, vas por buen camino."; }
+    else if (percentage >= 0.5) { medal = "🥈"; message = "No está mal. Repasa los errores y mejorarás."; }
+    else { medal = "📚"; message = "Sigue practicando. ¡Cada error es una oportunidad de aprendizaje!"; }
+    document.getElementById("medal-emoji").textContent = medal;
+    document.getElementById("result-message").textContent = message;
+    document.getElementById("review-container").classList.add("hidden");
+    document.getElementById("review-container").innerHTML = "";
+    snoopyMessage.textContent = percentage >= 0.7 ? "¡Estoy orgulloso de ti!" : "¡No te rindas, juntos podemos!";
+  }
+
+  function showReview() {
+    const container = document.getElementById("review-container");
+    container.classList.toggle("hidden");
+    if (!container.classList.contains("hidden")) {
+      container.innerHTML = "";
+      userAnswers.forEach((ans, i) => {
+        const div = document.createElement("div");
+        div.className = "review-item";
+        div.innerHTML = `<strong>${i+1}.</strong> ${ans.question} ${ans.correct ? "✅" : "❌"}`;
+        container.appendChild(div);
+      });
+    }
+  }
+
+  function restartGame() {
+    resultScreen.classList.add("hidden");
+    subjectScreen.classList.remove("hidden");
+  }
+
+  renderTopicButtons();
+</script>
+</body>
+</html>
